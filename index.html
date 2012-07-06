@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script src="hashcash.js"></script>
+  <title>Hashcash.js Demo</title>
+  <style>
+    body {
+      width: 60%;
+      margin: 1em auto;
+      font-family: Lucida Grande, Helvetica, Arial, sans-serif;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 36pt;
+    }
+    #resourcebox, #bitcostbox {
+     font-size: 18pt;
+    }
+    #resourcebox {
+      width: 80%;
+      float: left;
+    }
+    #bitcostbox {
+      width: 15%;
+      float: right; 
+    }
+    #generatebut {
+      display: block;
+      clear: both;
+      margin: 0.5em auto;
+      font-size: 16pt;
+    }
+    pre {
+      margin: 2em 0;
+      font-size: 16pt;
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hashcash generator</h1>
+  <form>
+    <input type="email" id="resourcebox" placeholder="Resource (eg. email address)" autofocus />
+    <input type="number" id="bitcostbox" min="1" max="31" value="16" />
+    <input type="button" id="generatebut" value="Generate!" />
+  </form>
+  <pre><code id="result"></code></pre>
+  
+  <script>
+	document.getElementById('generatebut').onclick = (function () {
+	  var resource = document.getElementById('resourcebox').value,
+	      bitcost  = parseInt(document.getElementById('bitcostbox').value);
+	  console.log('calculating');
+	  Hashcash.mint(resource, bitcost, (function (hashcash) {
+		document.getElementById('result').innerText = hashcash;
+		console.log('done calculating');
+	  }));
+	});
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+            _-_-_-_-_-_-_-_-_-_-_-_-_
+           )             _   _  bits (
+           (             _| / \      )
+           )            |__ \_/      (
+           (                         )
+           )                         (
+           (    _  _   _   ___ _  _  )   ___   _   ___ _  _
+           )   | || | /_\ / __| || | (  / __| /_\ / __| || |
+           (   | __ |/ _ \\__ \ __ | ) | (__ / _ \\__ \ __ |
+           )   |_||_/_/ \_\___/_||_| (  \___/_/ \_\___/_||_|
+           (                         )
+           )                         (        for JavaScript
+           (                         )
+           )              2012/04/20 (
+           (-_-_-_-_-_-_-_-_-_-_-_-_-)
+
+
+Hashcash is an email anti-spam system used to verify that the sender of a
+message is not trying to deliver it in bulk to many recipients at once. 
+If spam is Unsolicited Bulk Mail, then Hashcash is a system to make the
+Bulk part of spamming more difficult. (Systems like DKIM and PGP will help
+with the "unsolicited" part.)
+
+Hashcash exploits the fact that the average spammer is trying to send
+messages to thousands of recipients at once, whereas normal email users
+are only trying to send it to perhaps a dozen people. It uses this
+assumption to require that senders 'pay' for the delivery of messages
+in CPU time, by requiring a 'stamp' to be generated for each recipient,
+each at great computational cost. If an email lands in someone's inbox
+with a valid stamp for their email address (validation is very cheap),
+it's almost certainly not spam.
+
+The fact that generating Hashcash stamps is expensive is a significant
+obstacle to webmail services, though. You can generate them on the server,
+but this will just take up CPU that could be used to serve more requests.
+In addition, an attacker could use your server to generate Hashcash stamps
+and send spam for him, using your CPU time to do his dirty expensive work
+and have a near guarantee that email will land in the inboxes of recipients
+with Hashcash-aware spam filters.
+
+The solution is to generate Hashcash stamps on the client side, using
+JavaScript to do this work for us.
+
+
+                        _  _  _____      _______ ___  
+                       | || |/ _ \ \    / /_   _/ _ \ 
+                       | __ | (_) \ \/\/ /  | || (_) |
+                       |_||_|\___/ \_/\_/   |_| \___/ 
+
+Hashcash.js uses Web workers so that the computer time required to create
+a Hashcash stamp doesn't affect the responsiveness of your front-end. It
+presents an asynchronous interface much like XMLHTTPRequest. The reference
+implementation of Hashcash refers to the process of creating stamps as
+'minting,' and Hashcash follows suit. You need a 'resource' (usually a
+recipient address) and a 'bit-cost' (16 is recommended):
+
+    Hashcash.mint('God@heaven.af.mil', 16, function(stamp) {
+      console.log(stamp);
+    });
+
+This will print eg. '1:16:120705:God@heaven.af.mil::nRkBfzPP:70895' in your
+JavaScript console. Note that bit-costs can be up to 160 in Hashcash, but
+Hashcash.js only supports up to 31 for speed reasons.
+
+Beware that stamps contain the date they were generated on, and are supposed
+to 'expire' after ~30 days. If you pre-generate stamps for future messages,
+be sure to throw them out within about a week.
+
+
+                             ___ _  _ ___ ___  
+                            |_ _| \| | __/ _ \ 
+                             | || .` | _| (_) |
+                            |___|_|\_|_| \___/ 
+
+Hashcash works by calculating the stamp's SHA-1 hash, the first n bits of
+which must be 0. To achieve this in JavaScript, an implementation of the
+SHA-1 hash algorithm is needed, and this comes from Jeff Mott's CryptoJS
+collection. <http://code.google.com/p/crypto-js/> (It is included directly
+to save the load-time of another file. It will be updated frequently when
+new versions are available.)
+
+Hashcash was invented by Adam Back. For information on the format and other
+implementations, including verification tools, see <http://www.hashcash.org>
+and the Hashcash man page at <http://www.hashcash.org/docs/hashcash.html>.
+
+An example of usage for Hashcash.js is available in index.html, an example
+of a Hashcash generator on the client-side.
+
+
+(Legalese: Hashcash.js is Copyright © David Kendal, 2012. Portions copyright
+Jeff Mott, 2009–2012, released under the BSD license. Permission is hereby
+granted to distribute this software, modified or unmodified.)
