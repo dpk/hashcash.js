@@ -1,7 +1,7 @@
             _-_-_-_-_-_-_-_-_-_-_-_-_
-           )             _   _  bits (
-           (             _| / \      )
-           )            |__ \_/      (
+           )               ) /\ bits (
+           (              /_ \/      )
+           )                         (
            (                         )
            )                         (
            (    _  _   _   ___ _  _  )   ___   _   ___ _  _
@@ -51,8 +51,9 @@ Hashcash.js uses Web workers so that the computer time required to create
 a Hashcash stamp doesn't affect the responsiveness of your front-end. It
 presents an asynchronous interface much like XMLHTTPRequest. The reference
 implementation of Hashcash refers to the process of creating stamps as
-'minting,' and Hashcash follows suit. You need a 'resource' (usually a
-recipient address) and a 'bit-cost' (16 is recommended):
+'minting,' and Hashcash.js follows suit. You need a 'resource' (usually a
+recipient address) and a 'bit-cost' (I recommend 16 for testing and 20 in
+production):
 
     Hashcash.mint('God@heaven.af.mil', 16, function(stamp) {
       console.log(stamp);
