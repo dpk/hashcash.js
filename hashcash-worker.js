@@ -20,52 +20,32 @@ reset:function(){k.reset.call(this);this._doReset()},update:function(a){this._ap
 899497514);a=l;l=k;k=j<<30|j>>>2;j=g;g=c}e[0]=e[0]+g|0;e[1]=e[1]+j|0;e[2]=e[2]+k|0;e[3]=e[3]+l|0;e[4]=e[4]+a|0},_doFinalize:function(){var i=this._data,h=i.words,e=8*this._nDataBytes,g=8*i.sigBytes;h[g>>>5]|=128<<24-g%32;h[(g+64>>>9<<4)+15]=e;i.sigBytes=4*h.length;this._process()}});i.SHA1=m._createHelper(n);i.HmacSHA1=m._createHmacHelper(n)})();
 /* END CRYPTOJS CODE */
 
-function hashcash(resource, bitcost) {
-  if (!bitcost) bitcost = 16;
-  function randString() {
-    var length = 8,
-        alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=',
-        string = '';
-    while (string.length < length) {
-      string += alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-    return string;
-  }
-  function formatLength2(str) {
-    if (str.length === 1) {
-      return ('0' + str);
-    } else {
-      return str;
-    }
-  }
-  var date = new Date(),
-      base_cash = '1:' + bitcost + ':';
-  base_cash += formatLength2((date.getFullYear() % 100).toString());
-  base_cash += formatLength2((date.getMonth() + 1).toString());
-  base_cash += formatLength2((date.getDay() + 1).toString());
-  base_cash += ':' + resource + '::' + randString() + ':';
-  var ctr = 0,
-      hash,
+function do_hashcash(base_cash, bitcost, multiple, start) {
+  var ctr = start,
       done = false,
+      hash,
       shiftbits = (32 - bitcost);
+  
   while (!done) {
     hash = CryptoJS.SHA1(base_cash + ctr).words[0];
     if ((hash >> shiftbits) === 0) {
       done = true;
     } else {
-      ctr++;
+      ctr += multiple;
     }
   }
-  
-  return base_cash + ctr;
+  return (base_cash + ctr);
 }
 
 self.onmessage = (function (event) {
+  // {'reqid': reqid, 'base': base_cash, 'cost': bitcost, 'multiple': workers.length, start: i}
   var data = JSON.parse(event.data),
-      resource = data.resource,
-      bitcost = data.bitcost,
       reqid = data.reqid,
-      cashd = hashcash(resource, bitcost);
+      base = data.base,
+      bitcost = data.cost,
+      multiple = data.multiple,
+      start = data.start;
   
-  self.postMessage(JSON.stringify({'reqid': reqid, 'hashcash': cashd}));
+  self.postMessage(JSON.stringify({'reqid': reqid, 'hashcash': do_hashcash(base, bitcost, multiple, start)}));
 });
+
