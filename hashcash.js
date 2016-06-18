@@ -39,7 +39,7 @@ Hashcash = {
         base_cash = '1:' + bitcost + ':';
     base_cash += formatLength2((date.getFullYear() % 100).toString());
     base_cash += formatLength2((date.getMonth() + 1).toString());
-    base_cash += formatLength2((date.getDay() + 1).toString());
+    base_cash += formatLength2((date.getDate()).toString());
     base_cash += ':' + resource + '::' + randString() + ':';
     
     this.makeWorkers(reqid);
