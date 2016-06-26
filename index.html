@@ -121,9 +121,10 @@
     AwOAuTYYGwi7w5h+Kr0SJ8MFihpNbx+4Erq7BYBuzsdiH1jCAzoSfl0rVirN
     bRXlBBlLX+BP0XJLAPGzTkAuAOqb0WT5AH7OcdCm5B8TgRwSRKIHQtaLCwg1
     RAAAOwAAAAAAAAAAAA==" />
-  <pre><code id="result"></code></pre>
+  <pre><code id="result">result</code></pre>
   
   <script>
+    var result = document.getElementById('result').firstChild;
 	document.getElementById('generatebut').onclick = (function () {
 	  var resource = document.getElementById('resourcebox').value,
 	      bitcost  = parseInt(document.getElementById('bitcostbox').value);
@@ -131,7 +132,7 @@
 	  console.log('calculating');
 	  Hashcash.mint(resource, bitcost, (function (hashcash) {
 		console.log('done calculating');
-		document.getElementById('result').innerText = hashcash;
+		result.nodeValue = hashcash;
 	    document.getElementById('spinner').style.display = 'none';
 	  }));
 	});
